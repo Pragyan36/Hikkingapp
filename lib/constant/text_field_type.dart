@@ -1,0 +1,1 @@
+enum TextFieldType { Outline, Filled }

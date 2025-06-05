@@ -1,0 +1,97 @@
+name: hikkingapp
+description: "A new Flutter project."
+
+
+publish_to: 'none' 
+
+
+
+
+
+
+
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.6.0
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  
+  
+  cupertino_icons: ^1.0.8
+  flutter_svg: "^2.0.9"
+  flutter_screenutil: ^5.9.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  
+  
+  
+  
+  
+  flutter_lints: ^5.0.0
+
+
+
+
+
+flutter:
+  assets:
+    - assets/images/ 
+    
+
+
+  
+  
+  fonts:
+    - family: popinbold
+      fonts:
+        - asset: assets/fonts/Poppins-Bold.ttf
+    - family: popin
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+    - family: popinsemibold
+      fonts:
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+    - family: popinmedium
+      fonts:
+        - asset: assets/fonts/Poppins-Medium.ttf
+  uses-material-design: true
+
+  
+  
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
