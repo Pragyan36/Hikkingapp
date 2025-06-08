@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,6 +8,7 @@ import 'package:hikkingapp/constant/custom_round_buttom.dart';
 import 'package:hikkingapp/constant/imagedirectory.dart';
 import 'package:hikkingapp/constant/login_common_text_field.dart';
 import 'package:hikkingapp/constant/size.utils.dart';
+import 'package:hikkingapp/dashboard/ui/screen/dashboard.dart';
 
 class Loginscreen extends StatefulWidget {
   const Loginscreen({super.key});
@@ -16,6 +18,9 @@ class Loginscreen extends StatefulWidget {
 }
 
 class _LoginscreenState extends State<Loginscreen> {
+  final _emailcontroller = TextEditingController();
+  final _passwordcontroller = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   bool rememberMe = false;
   String maskPhoneNumber(String number) {
     final String firstTwo = number.substring(0, 2);
@@ -53,7 +58,7 @@ class _LoginscreenState extends State<Loginscreen> {
               autovalidateMode: AutovalidateMode.onUserInteraction,
               key: _loginFormKey,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -61,23 +66,23 @@ class _LoginscreenState extends State<Loginscreen> {
                     Text(
                       "Login",
                       style: TextStyle(
-                          fontFamily: "popinbold",
+                          // fontFamily: "popinbold",
                           fontWeight: FontWeight.bold,
                           fontSize: 26.sp,
                           color: Colors.black),
                     ),
                     SizedBox(height: height * 0.02),
                     LoginCustomTextField(
-                      title: "Mobile Number",
+                      title: "Email",
                       readOnly: rememberMe && _existingPhoneNumber.isNotEmpty,
-                      hintText: rememberMe && _existingPhoneNumber.isNotEmpty
-                          ? maskPhoneNumber(_existingPhoneNumber)
-                          : "Mobile Number",
-                      textInputType: TextInputType.phone,
+                      hintText: "Email",
+                      textInputType: TextInputType.emailAddress,
+                      controller: _emailcontroller,
                     ),
                     CustomPasswordField(
                       title: "Password",
                       hintText: "Password",
+                      controller: _passwordcontroller,
                     ),
                     ValueListenableBuilder<bool>(
                       valueListenable: _hasExistingLoginSaved,
@@ -98,7 +103,23 @@ class _LoginscreenState extends State<Loginscreen> {
                         );
                       },
                     ),
-                    CustomRoundedButtom(title: "Login", onPressed: () {}),
+                    CustomRoundedButtom(
+                        title: "Login",
+                        onPressed: () {
+                          final isvalid =
+                              _loginFormKey.currentState!.validate();
+
+                          _auth
+                              .signInWithEmailAndPassword(
+                                  email: _emailcontroller.text,
+                                  password: _passwordcontroller.text)
+                              .then((value) {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DashbaordScreen()));
+                          });
+                        }),
                     SizedBox(
                       height: 20,
                     ),

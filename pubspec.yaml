@@ -26,6 +26,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_svg: "^2.0.9"
   flutter_screenutil: ^5.9.0
+  firebase_core: ^3.13.1
+  firebase_auth: 
 
 dev_dependencies:
   flutter_test:
@@ -46,23 +48,24 @@ flutter:
   assets:
     - assets/images/ 
     
+    
 
 
   
   
-  fonts:
-    - family: popinbold
-      fonts:
-        - asset: assets/fonts/Poppins-Bold.ttf
-    - family: popin
-      fonts:
-        - asset: assets/fonts/Poppins-Regular.ttf
-    - family: popinsemibold
-      fonts:
-        - asset: assets/fonts/Poppins-SemiBold.ttf
-    - family: popinmedium
-      fonts:
-        - asset: assets/fonts/Poppins-Medium.ttf
+  # fonts:
+  #   - family: popinbold
+  #     fonts:
+  #       - asset: assets/fonts/Poppins-Bold.ttf
+  #   - family: popin
+  #     fonts:
+  #       - asset: assets/fonts/Poppins-Regular.ttf
+  #   - family: popinsemibold
+  #     fonts:
+  #       - asset: assets/fonts/Poppins-SemiBold.ttf
+  #   - family: popinmedium
+  #     fonts:
+  #       - asset: assets/fonts/Poppins-Medium.ttf
   uses-material-design: true
 
   
