@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hikkingapp/Login/screen/forget.dart';
 import 'package:hikkingapp/Login/screen/register.dart';
 import 'package:hikkingapp/constant/custom_password_field.dart';
 import 'package:hikkingapp/constant/custom_round_buttom.dart';
@@ -84,10 +85,10 @@ class _LoginscreenState extends State<Loginscreen> {
                       hintText: "Password",
                       controller: _passwordcontroller,
                     ),
-                    ValueListenableBuilder<bool>(
-                      valueListenable: _hasExistingLoginSaved,
-                      builder: (context, val, _) {
-                        return Row(
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
                           children: [
                             Checkbox(
                               value: rememberMe,
@@ -100,25 +101,59 @@ class _LoginscreenState extends State<Loginscreen> {
                             ),
                             const Text("Remember Me"),
                           ],
-                        );
-                      },
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ForgotPasswordPage()),
+                            );
+                          },
+                          child: const Text(
+                            "Forgot Password?",
+                            style: TextStyle(color: Colors.blue),
+                          ),
+                        ),
+                      ],
                     ),
                     CustomRoundedButtom(
                         title: "Login",
-                        onPressed: () {
-                          final isvalid =
+                        onPressed: () async {
+                          final isValid =
                               _loginFormKey.currentState!.validate();
+                          if (!isValid) return;
 
-                          _auth
-                              .signInWithEmailAndPassword(
-                                  email: _emailcontroller.text,
-                                  password: _passwordcontroller.text)
-                              .then((value) {
+                          try {
+                            await _auth.signInWithEmailAndPassword(
+                              email: _emailcontroller.text.trim(),
+                              password: _passwordcontroller.text.trim(),
+                            );
+
+                            // Navigate to dashboard if login is successful
                             Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => DashbaordScreen()));
-                          });
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DashbaordScreen()),
+                            );
+                          } on FirebaseAuthException catch (e) {
+                            String message = "Login failed";
+                            if (e.code == 'user-not-found') {
+                              message = 'No user found for that email.';
+                            } else if (e.code == 'wrong-password') {
+                              message = 'Incorrect password.';
+                            } else if (e.code == 'invalid-email') {
+                              message = 'Invalid email address.';
+                            }
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(message),
+                                backgroundColor: Colors.red,
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          }
                         }),
                     SizedBox(
                       height: 20,
