@@ -25,9 +25,10 @@ class UserModel {
       DocumentSnapshot<Map<String, dynamic>> document) {
     final data = document.data()!;
     return UserModel(
-        id: document.id,
-        email: data["Email"],
-        password: data["Password"],
-        roles: data["Roles"]);
+      id: document.id,
+      email: data["Email"] ?? "", // fallback to empty string
+      password: data["Password"] ?? "",
+      roles: data["Roles"] ?? "",
+    );
   }
 }
