@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hikkingapp/features/screens/map.dart';
 import 'package:hikkingapp/features/screens/message.dart';
-import 'package:hikkingapp/features/screens/profile.dart';
+import 'package:hikkingapp/profile/profile.dart';
 import 'package:hikkingapp/features/screens/task.dart';
 
 class DashbaordScreen extends StatefulWidget {

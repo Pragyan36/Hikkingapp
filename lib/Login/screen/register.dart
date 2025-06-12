@@ -56,9 +56,16 @@ class _RegisterPageState extends State<RegisterPage> {
   final _rolescontroller = TextEditingController();
   final _passwordcontroller = TextEditingController();
   final _confirmpassword = TextEditingController();
+  final _firstnamecontroller = TextEditingController();
+  final _lastnamecontroller = TextEditingController();
+  final _crewnamecontroller = TextEditingController();
+  final _phonecontroller = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  String capitalize(String text) {
+    if (text.isEmpty) return text;
+    return text[0].toUpperCase() + text.substring(1);
+  }
 
-  String _existingPhoneNumber = "";
   final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
   final height = SizeUtils.height;
   final width = SizeUtils.width;
@@ -111,11 +118,30 @@ class _RegisterPageState extends State<RegisterPage> {
                         });
                       },
                     ),
+                    LoginCustomTextField(
+                      controller: _firstnamecontroller,
+                      title: "First Name",
+                      textInputType: TextInputType.text,
+                    ),
+                    LoginCustomTextField(
+                      controller: _lastnamecontroller,
+                      title: "Last Name",
+                      textInputType: TextInputType.text,
+                    ),
+                    LoginCustomTextField(
+                      controller: _crewnamecontroller,
+                      title: "Crew Name",
+                      textInputType: TextInputType.text,
+                    ),
 
+                    LoginCustomTextField(
+                      controller: _phonecontroller,
+                      title: "Phone",
+                      textInputType: TextInputType.number,
+                    ),
                     LoginCustomTextField(
                       controller: _emailcontroller,
                       title: "Email",
-                      readOnly: rememberMe && _existingPhoneNumber.isNotEmpty,
                       textInputType: TextInputType.emailAddress,
                     ),
                     CustomPasswordField(
@@ -137,6 +163,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         return null;
                       },
                     ),
+
                     SizedBox(
                       height: 20,
                     ),
@@ -153,9 +180,16 @@ class _RegisterPageState extends State<RegisterPage> {
 
                               // Create user model
                               final user = UserModel(
+                                firstname: capitalize(
+                                    _firstnamecontroller.text.trim()),
+                                lastname:
+                                    capitalize(_lastnamecontroller.text.trim()),
+                                crewname:
+                                    capitalize(_crewnamecontroller.text.trim()),
+                                phone: _phonecontroller.text.trim(),
                                 email: _emailcontroller.text.trim(),
                                 password: _passwordcontroller.text.trim(),
-                                roles: _rolescontroller.text.trim(),
+                                roles: capitalize(_rolescontroller.text.trim()),
                               );
 
                               // Store user in Firestore
