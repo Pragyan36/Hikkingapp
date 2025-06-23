@@ -1,6 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hikkingapp/constant/custom_password_field.dart';
@@ -11,6 +8,8 @@ import 'package:hikkingapp/constant/login_common_text_field.dart';
 import 'package:hikkingapp/constant/size.utils.dart';
 import 'package:hikkingapp/dashboard/ui/screen/dashboard.dart';
 import 'package:hikkingapp/model/users.dart';
+import 'package:hikkingapp/provider/controller/login_state.dart';
+import 'package:provider/provider.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -20,227 +19,232 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final _db = FirebaseFirestore.instance;
-  createUser(UserModel user) async {
-    try {
-      await _db.collection("users").add(user.toJson());
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Success, your account has been created"),
-          backgroundColor: Colors.green,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Error: ${error.toString()}"),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
-  }
-
   bool rememberMe = false;
   String? selectedRole;
-  String maskPhoneNumber(String number) {
-    final String firstTwo = number.substring(0, 2);
-    final String lastTwo = number.substring(number.length - 2);
-    final String masked = firstTwo + "**" + lastTwo;
-
-    return masked;
-  }
-
-  final _emailcontroller = TextEditingController();
-  final _rolescontroller = TextEditingController();
-  final _passwordcontroller = TextEditingController();
-  final _confirmpassword = TextEditingController();
-  final _firstnamecontroller = TextEditingController();
-  final _lastnamecontroller = TextEditingController();
-  final _crewnamecontroller = TextEditingController();
-  final _phonecontroller = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  String capitalize(String text) {
-    if (text.isEmpty) return text;
-    return text[0].toUpperCase() + text.substring(1);
-  }
 
   final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
   final height = SizeUtils.height;
   final width = SizeUtils.width;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 40.0),
-            child: Center(
-              child: Image(
-                image: AssetImage(AppImage.logo),
-                fit: BoxFit.fill,
-                height: 100,
-                width: 100,
+    return Consumer<LoginState>(builder: (context, registercontroller, child) {
+      return Scaffold(
+        body: ListView(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 40.0),
+              child: Center(
+                child: Image(
+                  image: AssetImage(AppImage.logo),
+                  fit: BoxFit.fill,
+                  height: 100,
+                  width: 100,
+                ),
               ),
             ),
-          ),
-          SizedBox(
-            height: height * 0.01,
-          ),
-          Form(
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              key: _loginFormKey,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: height * 0.01),
-                    Text(
-                      "Sign Up",
-                      style: TextStyle(
-                          fontFamily: "popinbold",
-                          fontWeight: FontWeight.bold,
-                          fontSize: 26.sp,
-                          color: Colors.black),
-                    ),
-                    SizedBox(height: height * 0.02),
-                    LoginCustomDropdown(
-                      title: "Roles",
-                      value: selectedRole,
-                      controller: _rolescontroller, // custom param we'll add
-                      items: ['Guide', 'Member'],
-                      onChanged: (value) {
-                        setState(() {
-                          selectedRole = value!;
-                          _rolescontroller.text = value; // manually sync
-                        });
-                      },
-                    ),
-                    LoginCustomTextField(
-                      controller: _firstnamecontroller,
-                      title: "First Name",
-                      textInputType: TextInputType.text,
-                    ),
-                    LoginCustomTextField(
-                      controller: _lastnamecontroller,
-                      title: "Last Name",
-                      textInputType: TextInputType.text,
-                    ),
-                    LoginCustomTextField(
-                      controller: _crewnamecontroller,
-                      title: "Crew Name",
-                      textInputType: TextInputType.text,
-                    ),
+            SizedBox(
+              height: height * 0.01,
+            ),
+            Form(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                key: _loginFormKey,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: height * 0.01),
+                      Text(
+                        "Sign Up",
+                        style: TextStyle(
+                            fontFamily: "popinbold",
+                            fontWeight: FontWeight.bold,
+                            fontSize: 26.sp,
+                            color: Colors.black),
+                      ),
+                      SizedBox(height: height * 0.02),
+                      LoginCustomDropdown(
+                        title: "Roles",
+                        value: selectedRole,
+                        controller: registercontroller
+                            .registerrolescontroller, // custom param we'll add
+                        items: ['Guide', 'Member'],
+                        onChanged: (value) {
+                          setState(() {
+                            selectedRole = value!;
+                            registercontroller.registerrolescontroller.text =
+                                value; // manually sync
+                          });
+                        },
+                      ),
+                      LoginCustomTextField(
+                        controller:
+                            registercontroller.registerfirstnamecontroller,
+                        title: "First Name",
+                        textInputType: TextInputType.text,
+                      ),
+                      LoginCustomTextField(
+                        controller:
+                            registercontroller.registerlastnamecontroller,
+                        title: "Last Name",
+                        textInputType: TextInputType.text,
+                      ),
+                      LoginCustomTextField(
+                        controller:
+                            registercontroller.registercrewnamecontroller,
+                        title: "Crew Name",
+                        textInputType: TextInputType.text,
+                      ),
 
-                    LoginCustomTextField(
-                      controller: _phonecontroller,
-                      title: "Phone",
-                      textInputType: TextInputType.number,
-                    ),
-                    LoginCustomTextField(
-                      controller: _emailcontroller,
-                      title: "Email",
-                      textInputType: TextInputType.emailAddress,
-                    ),
-                    CustomPasswordField(
-                      controller: _passwordcontroller,
-                      title: "Password",
-                      hintText: "Password",
-                    ),
-                    CustomPasswordField(
-                      controller: _confirmpassword,
-                      title: "Confirm Password",
-                      hintText: "Password",
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please confirm your password';
-                        }
-                        if (value != _passwordcontroller.text) {
-                          return 'Passwords do not match';
-                        }
-                        return null;
-                      },
-                    ),
-
-                    SizedBox(
-                      height: 20,
-                    ),
-                    CustomRoundedButtom(
-                        title: "Sign up",
-                        onPressed: () async {
-                          if (_loginFormKey.currentState!.validate()) {
-                            try {
-                              // Register user with Firebase Auth
-                              await _auth.createUserWithEmailAndPassword(
-                                email: _emailcontroller.text.trim(),
-                                password: _passwordcontroller.text.trim(),
-                              );
-
-                              // Create user model
-                              final user = UserModel(
-                                firstname: capitalize(
-                                    _firstnamecontroller.text.trim()),
-                                lastname:
-                                    capitalize(_lastnamecontroller.text.trim()),
-                                crewname:
-                                    capitalize(_crewnamecontroller.text.trim()),
-                                phone: _phonecontroller.text.trim(),
-                                email: _emailcontroller.text.trim(),
-                                password: _passwordcontroller.text.trim(),
-                                roles: capitalize(_rolescontroller.text.trim()),
-                              );
-
-                              // Store user in Firestore
-                              await createUser(user);
-
-                              // Navigate to Dashboard
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => DashbaordScreen()),
-                              );
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                      "Registration error: ${e.toString()}"),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            }
+                      LoginCustomTextField(
+                        controller: registercontroller.registerphonecontroller,
+                        title: "Phone",
+                        textInputType: TextInputType.number,
+                      ),
+                      LoginCustomTextField(
+                        controller: registercontroller.registeremailcontroller,
+                        title: "Email",
+                        textInputType: TextInputType.emailAddress,
+                      ),
+                      CustomPasswordField(
+                        controller:
+                            registercontroller.registerpasswordcontroller,
+                        title: "Password",
+                        hintText: "Password",
+                      ),
+                      CustomPasswordField(
+                        controller:
+                            registercontroller.registerpasswordcontroller,
+                        title: "Confirm Password",
+                        hintText: "Password",
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please confirm your password';
                           }
-                        }),
+                          if (value !=
+                              registercontroller
+                                  .registerpasswordcontroller.text) {
+                            return 'Passwords do not match';
+                          }
+                          return null;
+                        },
+                      ),
 
-                    //auth--------------
-                    // onPressed: () {
-                    //   print(
-                    //       "this is email ---------------$_emailcontroller");
-                    //   final isvalid =
-                    //       _loginFormKey.currentState!.validate();
-                    //   _auth
-                    //       .createUserWithEmailAndPassword(
-                    //           email: _emailcontroller.text,
-                    //           password: _passwordcontroller.text)
-                    //       .then((value) {
-                    //     print(
-                    //         "this is email ---------------$_emailcontroller");
-                    //     Navigator.pushReplacement(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //           builder: (context) => DashbaordScreen()),
-                    //     );
-                    //   });
-                    // }),
-                    SizedBox(
-                      height: 20,
-                    ),
-                  ],
-                ),
-              ))
-        ],
-      ),
-    );
+                      SizedBox(
+                        height: 20,
+                      ),
+                      CustomRoundedButtom(
+                          title: "Sign up",
+                          onPressed: () async {
+                            if (_loginFormKey.currentState!.validate()) {
+                              try {
+                                // Register user with Firebase Auth
+                                await registercontroller.auth
+                                    .createUserWithEmailAndPassword(
+                                  email: registercontroller
+                                      .registeremailcontroller.text
+                                      .trim(),
+                                  password: registercontroller
+                                      .registerpasswordcontroller.text
+                                      .trim(),
+                                );
+
+                                // Create user model
+                                final user = UserModel(
+                                  firstname: registercontroller.capitalize(
+                                      registercontroller
+                                          .registerfirstnamecontroller.text
+                                          .trim()),
+                                  lastname: registercontroller.capitalize(
+                                      registercontroller
+                                          .registerlastnamecontroller.text
+                                          .trim()),
+                                  crewname: registercontroller.capitalize(
+                                      registercontroller
+                                          .registercrewnamecontroller.text
+                                          .trim()),
+                                  phone: registercontroller
+                                      .registerphonecontroller.text
+                                      .trim(),
+                                  email: registercontroller
+                                      .registeremailcontroller.text
+                                      .trim(),
+                                  password: registercontroller
+                                      .registerpasswordcontroller.text
+                                      .trim(),
+                                  roles: registercontroller.capitalize(
+                                      registercontroller
+                                          .registerrolescontroller.text
+                                          .trim()),
+                                );
+
+                                // Store user in Firestore
+                                final error =
+                                    await registercontroller.createUser(user);
+                                if (error == null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          "Success, your account has been created"),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(error),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+
+                                // Navigate to Dashboard
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => DashbaordScreen()),
+                                );
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        "Registration error: ${e.toString()}"),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            }
+                          }),
+
+                      //auth--------------
+                      // onPressed: () {
+                      //   print(
+                      //       "this is email ---------------$_emailcontroller");
+                      //   final isvalid =
+                      //       _loginFormKey.currentState!.validate();
+                      //   _auth
+                      //       .createUserWithEmailAndPassword(
+                      //           email: _emailcontroller.text,
+                      //           password: _passwordcontroller.text)
+                      //       .then((value) {
+                      //     print(
+                      //         "this is email ---------------$_emailcontroller");
+                      //     Navigator.pushReplacement(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //           builder: (context) => DashbaordScreen()),
+                      //     );
+                      //   });
+                      // }),
+                      SizedBox(
+                        height: 20,
+                      ),
+                    ],
+                  ),
+                ))
+          ],
+        ),
+      );
+    });
   }
 }

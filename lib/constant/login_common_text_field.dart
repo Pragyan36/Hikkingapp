@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:hikkingapp/app/theme.dart';
+import 'package:hikkingapp/constant/app_color.dart';
+import 'package:hikkingapp/constant/theme.dart';
 import 'package:hikkingapp/constant/custom_icon_button.dart';
 import 'package:hikkingapp/constant/font.dart';
 import 'package:hikkingapp/constant/size.utils.dart';

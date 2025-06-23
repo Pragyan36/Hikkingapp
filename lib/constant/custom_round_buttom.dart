@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hikkingapp/app/theme.dart';
+import 'package:hikkingapp/constant/app_color.dart';
+import 'package:hikkingapp/constant/theme.dart';
 import 'package:hikkingapp/constant/size.utils.dart';
 
 class CustomRoundedButtom extends StatefulWidget {
